@@ -58,4 +58,4 @@ export {
   removeContact,
   addContact,
   updateContact,
-};
+};  
