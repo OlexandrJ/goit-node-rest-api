@@ -3,7 +3,6 @@ import express from "express";
 import morgan from "morgan";
 import cors from "cors";
 import mongoose from "mongoose";
-
 import contactsRouter from "./routes/contactsRouter.js";
 
 const app = express();
