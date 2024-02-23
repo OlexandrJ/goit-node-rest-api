@@ -17,9 +17,11 @@ mongoose
   .connect(DB_URI)
   .then(() => {
     console.log("Database connection successful");
-    process.exit(1);
   })
-  .catch((error) => console.error("Database connection error:", error));
+  .catch((error) => {
+    console.error("Database connection error:", error);
+    process.exit(1);
+  });
 
 app.use("/api/contacts", contactsRouter);
 
