@@ -1,3 +1,4 @@
+import { Types } from 'mongoose';
 import { listContacts, getContactById, removeContact, addContact, updateContact } from "../services/contactsServices.js";
 import { createContactSchema, updateContactSchema } from "../schemas/contactsSchemas.js";
 import HttpError from "../helpers/HttpError.js";
@@ -7,6 +8,10 @@ export const updateStatusContact = async (req, res, next) => {
   try {
     const { contactId } = req.params;
     const { favorite } = req.body;
+
+        if (!Types.ObjectId.isValid(contactId)) {
+      throw HttpError(400, 'Invalid contact ID');
+    }
 
     const contact = await Contact.findById(contactId);
     if (!contact) {
@@ -27,7 +32,7 @@ export const getAllContacts = async (req, res, next) => {
     const contacts = await listContacts();
     res.status(200).json(contacts);
   } catch (error) {
-    next(error).json({ message: "Server error" });
+    next(error);
   }
 };
 
