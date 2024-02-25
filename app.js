@@ -1,8 +1,8 @@
+import 'dotenv/config';
 import express from "express";
 import morgan from "morgan";
 import cors from "cors";
 import mongoose from "mongoose";
-
 import contactsRouter from "./routes/contactsRouter.js";
 
 const app = express();
@@ -11,9 +11,13 @@ app.use(morgan("tiny"));
 app.use(cors());
 app.use(express.json());
 
-mongoose.connect("mongodb+srv://student:7kLATMKHMzLvt6Iu@cluster1.a8jw25c.mongodb.net/?retryWrites=true&w=majority'", {
-})
-  .then(() => console.log("Database connection successful"))
+const DB_URI = process.env.DB_URI;
+
+mongoose
+  .connect(DB_URI)
+  .then(() => {
+    console.log("Database connection successful");
+  })
   .catch((error) => {
     console.error("Database connection error:", error);
     process.exit(1);

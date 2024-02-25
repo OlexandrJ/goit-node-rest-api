@@ -1,7 +1,6 @@
-import { listContacts, getContactById, removeContact, addContact, updateContact } from "../services/contactsServices.js";
+import Contact from "../models/Contact.js";
 import { createContactSchema, updateContactSchema } from "../schemas/contactsSchemas.js";
 import HttpError from "../helpers/HttpError.js";
-import Contact from "../models/Contact.js";
 
 export const updateStatusContact = async (req, res, next) => {
   try {
@@ -24,17 +23,17 @@ export const updateStatusContact = async (req, res, next) => {
 
 export const getAllContacts = async (req, res, next) => {
   try {
-    const contacts = await listContacts();
+    const contacts = await Contact.find();
     res.status(200).json(contacts);
   } catch (error) {
-    next(error).json({ message: "Server error" });
+    next(error);
   }
 };
 
 export const getOneContact = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const contact = await getContactById(id);
+    const contact = await Contact.findById(id);
     if (!contact) {
       throw HttpError(404, "Not found");
     }
@@ -47,7 +46,7 @@ export const getOneContact = async (req, res, next) => {
 export const deleteContact = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const contact = await removeContact(id);
+    const contact = await Contact.findByIdAndDelete(id);
     if (!contact) {
       throw HttpError(404, "Not found");
     }
@@ -64,7 +63,8 @@ export const createContact = async (req, res, next) => {
     if (error) {
       throw HttpError(400, error.message);
     }
-    const newContact = await addContact(name, email, phone);
+    const newContact = new Contact({ name, email, phone });
+    await newContact.save();
     res.status(201).json(newContact);
   } catch (error) {
     next(error);
@@ -82,12 +82,11 @@ export const updateContactNew = async (req, res, next) => {
     if (error) {
       throw HttpError(400, error.message);
     }
-    const contact = await getContactById(id);
+    const contact = await Contact.findByIdAndUpdate(id, { name, email, phone }, { new: true });
     if (!contact) {
       throw HttpError(404, "Not found");
     }
-    const updatedContact = await updateContact(id, { name, email, phone });
-    res.json(updatedContact);
+    res.json(contact);
   } catch (error) {
     next(error);
   }
