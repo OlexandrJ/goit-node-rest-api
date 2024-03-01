@@ -3,6 +3,22 @@ import bcrypt from 'bcrypt';
 import User from '../models/User.js';
 import HttpError from '../helpers/HttpError.js';
 
+export const registerUser = async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      throw HttpError(409, 'Email вже використовується');
+    }
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = new User({ email, password: hashedPassword });
+    await newUser.save();
+    res.status(201).json({ user: { email: newUser.email, subscription: newUser.subscription } });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const loginUser = async (req, res, next) => {
   try {
     const { email, password } = req.body;
