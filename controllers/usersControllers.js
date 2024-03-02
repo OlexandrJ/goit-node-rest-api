@@ -8,7 +8,7 @@ export const registerUser = async (req, res, next) => {
     const { email, password } = req.body;
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      throw HttpError(409, 'Email вже використовується');
+      throw HttpError(409, 'Email in use');
     }
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = new User({ email, password: hashedPassword });
