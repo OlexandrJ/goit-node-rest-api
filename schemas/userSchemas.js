@@ -1,10 +1,8 @@
-const { Schema, model } = require('mongoose');
-
-const Joi = require('joi');
+import { Schema, model } from 'mongoose';
+import Joi from 'joi';
+import { handleMongooseError } from '../helpers/handleMongooseError.js';
 
 const emailRegex = /^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[a-zA-Z0-9]+$/;
-
-const handleMongooseError = require('../helpers/handleMongooseError');
 
 const userSchema = new Schema(
   {
@@ -52,7 +50,7 @@ const userSchema = new Schema(
 
 userSchema.post('save', handleMongooseError);
 
-const registrationSchema = Joi.object({
+export const registrationSchema = Joi.object({
   email: Joi.string().pattern(new RegExp(emailRegex)).required().messages({
     'any.required': `Missing required email field`,
   }),
@@ -62,7 +60,7 @@ const registrationSchema = Joi.object({
   }),
 });
 
-const loginSchema = Joi.object({
+export const loginSchema = Joi.object({
   email: Joi.string().pattern(new RegExp(emailRegex)).required().messages({
     'any.required': `Missing required email field`,
   }),
@@ -90,7 +88,7 @@ const schemas = {
 
 const User = model('user', userSchema);
 
-module.exports = {
+export default {
   User,
   schemas,
 };
