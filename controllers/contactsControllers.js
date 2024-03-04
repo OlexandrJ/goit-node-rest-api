@@ -23,7 +23,8 @@ export const updateStatusContact = async (req, res, next) => {
 
 export const getAllContacts = async (req, res, next) => {
   try {
-    const contacts = await Contact.find();
+    const userId = req.user._id;
+    const contacts = await Contact.find({ owner: userId });
     res.status(200).json(contacts);
   } catch (error) {
     next(error);
@@ -32,8 +33,9 @@ export const getAllContacts = async (req, res, next) => {
 
 export const getOneContact = async (req, res, next) => {
   try {
+    const userId = req.user._id;
     const { id } = req.params;
-    const contact = await Contact.findById(id);
+    const contact = await Contact.findOne({ _id: id, owner: userId });
     if (!contact) {
       throw HttpError(404, "Not found");
     }
