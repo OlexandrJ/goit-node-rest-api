@@ -21,6 +21,6 @@ contactsRouter.post("/", authMiddleware, createContact);
 
 contactsRouter.put("/:id", authMiddleware, updateContactNew);
 
-contactsRouter.patch("/:contactId/favorite", updateStatusContact);
+contactsRouter.patch("/:contactId/favorite", authMiddleware, updateStatusContact);
 
 export default contactsRouter;
