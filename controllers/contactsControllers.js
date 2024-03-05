@@ -47,8 +47,9 @@ export const getOneContact = async (req, res, next) => {
 
 export const deleteContact = async (req, res, next) => {
   try {
+    const userId = req.user._id;
     const { id } = req.params;
-    const contact = await Contact.findByIdAndDelete(id);
+    const contact = await Contact.findOneAndDelete({ _id: id, owner: userId }); // Видаляємо контакт, який належить поточному користувачу
     if (!contact) {
       throw HttpError(404, "Not found");
     }
@@ -75,6 +76,7 @@ export const createContact = async (req, res, next) => {
 
 export const updateContactNew = async (req, res, next) => {
   try {
+    const userId = req.user._id;
     const { id } = req.params;
     const { name, email, phone } = req.body;
     if (!name && !email && !phone) {
@@ -84,7 +86,7 @@ export const updateContactNew = async (req, res, next) => {
     if (error) {
       throw HttpError(400, error.message);
     }
-    const contact = await Contact.findByIdAndUpdate(id, { name, email, phone }, { new: true });
+    const contact = await Contact.findOneAndUpdate({ _id: id, owner: userId }, { name, email, phone }, { new: true });
     if (!contact) {
       throw HttpError(404, "Not found");
     }
