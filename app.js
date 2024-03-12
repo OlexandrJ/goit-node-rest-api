@@ -5,14 +5,21 @@ import cors from "cors";
 import mongoose from "mongoose";
 import contactsRouter from "./routes/contactsRouter.js";
 import usersRouter from "./routes/usersRouter.js";
+import path from 'path';
 
 const app = express();
 
 app.use(morgan("tiny"));
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 const DB_URI = process.env.DB_URI;
+
+const __filename = new URL(import.meta.url).pathname;
+const __dirname = path.dirname(__filename);
+const publicPath = path.join(__dirname, 'public');
+app.use(express.static(publicPath));
 
 mongoose
   .connect(DB_URI)
