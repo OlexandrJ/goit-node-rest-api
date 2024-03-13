@@ -1,5 +1,6 @@
 import express from 'express';
 import path from 'path';
+import { verifyUser } from './controllers/usersControllers.js';
 
 const app = express();
 
@@ -11,3 +12,5 @@ app.use(express.static(publicPath));
 app.listen(3000, () => {
   console.log('Server is running on port 3000');
 });
+
+app.get('/api/users/verify/:verificationToken', verifyUser);

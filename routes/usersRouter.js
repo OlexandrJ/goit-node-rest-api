@@ -6,6 +6,7 @@ import authMiddleware from '../middleware/authMiddleware.js';
 import { getCurrentUser } from '../controllers/usersControllers.js';
 import { updateAvatar } from '../controllers/usersControllers.js';
 import multer from 'multer';
+import { verifyUser, resendVerificationEmail } from '../controllers/usersControllers.js';
 
 
 const usersRouter = express.Router();
@@ -16,5 +17,7 @@ usersRouter.post('/login', validateBody(loginSchema), loginUser);
 usersRouter.get('/current', authMiddleware, getCurrentUser);
 usersRouter.post('/logout', authMiddleware, logoutUser);
 usersRouter.patch('/avatars', authMiddleware, upload.single('avatar'), updateAvatar);
+usersRouter.get('/verify/:verificationToken', verifyUser);
+usersRouter.post('/verify', resendVerificationEmail);
 
 export default usersRouter;

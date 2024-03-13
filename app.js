@@ -6,6 +6,9 @@ import mongoose from "mongoose";
 import contactsRouter from "./routes/contactsRouter.js";
 import usersRouter from "./routes/usersRouter.js";
 import path from 'path';
+import { verifyUser } from './controllers/usersControllers.js';
+import { resendVerificationEmail } from './controllers/usersControllers.js';
+
 
 const app = express();
 
@@ -33,6 +36,9 @@ mongoose
 
 app.use("/api/contacts", contactsRouter);
 app.use("/api/users", usersRouter);
+
+app.get('/api/users/verify/:verificationToken', verifyUser);
+app.post('/api/users/verify', resendVerificationEmail);
 
 app.use((_, res) => {
   res.status(404).json({ message: "Route not found" });

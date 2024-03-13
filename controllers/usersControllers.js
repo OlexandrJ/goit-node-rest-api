@@ -5,6 +5,7 @@ import HttpError from '../helpers/HttpError.js';
 import gravatar from 'gravatar';
 import fs from 'fs/promises';
 import jimp from 'jimp';
+import { nanoid } from 'nanoid';
 
 export const registerUser = async (req, res, next) => {
   try {
@@ -84,6 +85,46 @@ export const updateAvatar = async (req, res, next) => {
     await user.save();
 
     res.status(200).json({ avatarURL });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const verifyUser = async (req, res, next) => {
+  try {
+    const { verificationToken } = req.params;
+    const user = await User.findOne({ verificationToken });
+
+    if (!user) {
+      throw HttpError(404, 'User not found');
+    }
+
+    user.verify = true;
+    user.verificationToken = null;
+    await user.save();
+
+    res.status(200).json({ message: 'Verification successful' });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const resendVerificationEmail = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      throw HttpError(404, 'User not found');
+    }
+
+    if (user.verify) {
+      throw HttpError(400, 'Verification has already been passed');
+    }
+
+    await sendVerificationEmail(user.email, user.verificationToken);
+
+    res.status(200).json({ message: 'Verification email sent' });
   } catch (error) {
     next(error);
   }
