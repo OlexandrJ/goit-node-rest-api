@@ -16,8 +16,10 @@ export const registerUser = async (req, res, next) => {
     }
     const avatarURL = gravatar.url(email, { protocol: 'https', s: '250' });
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = new User({ email, password: hashedPassword, avatarURL });
+    const verificationToken = nanoid();
+    const newUser = new User({ email, password: hashedPassword, avatarURL, verificationToken });
     await newUser.save();
+    await sendVerificationEmail(newUser.email, newUser.verificationToken);
     res.status(201).json({ user: { email: newUser.email, subscription: newUser.subscription } });
   } catch (error) {
     next(error);
