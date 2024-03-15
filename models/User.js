@@ -29,10 +29,10 @@ const userSchema = new Schema({
     type: Boolean,
     default: false,
   },
-  verificationToken: {
+verificationToken: {
     type: String,
-    required: [true, 'Verify token is required'],
-  },
+    required: true,
+},
 });
 
 const User = mongoose.model('User', userSchema);
