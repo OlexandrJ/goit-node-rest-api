@@ -6,6 +6,7 @@ import gravatar from 'gravatar';
 import fs from 'fs/promises';
 import jimp from 'jimp';
 import { nanoid } from 'nanoid';
+import { sendVerificationEmail } from '../services/emailService.js';
 
 export const registerUser = async (req, res, next) => {
   try {
