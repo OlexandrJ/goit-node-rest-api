@@ -40,7 +40,10 @@ export const loginUser = async (req, res, next) => {
     }
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
     user.token = token;
-    await user.save();
+    await User.findOneAndUpdate(
+  { verificationToken },
+  { verify: true, verificationToken: null }
+);
     res.json({ token, user: { email: user.email, subscription: user.subscription } });
   } catch (error) {
     next(error);
@@ -50,7 +53,10 @@ export const loginUser = async (req, res, next) => {
 export const logoutUser = async (req, res, next) => {
   try {
     req.user.token = null;
-    await req.user.save();
+    await User.findOneAndUpdate(
+  { verificationToken },
+  { verify: true, verificationToken: null }
+);
     res.status(204).end();
   } catch (error) {
     next(error);
@@ -85,7 +91,10 @@ export const updateAvatar = async (req, res, next) => {
     
     await fs.rename(req.file.path, avatarPath);
     user.avatarURL = avatarURL;
-    await user.save();
+    await User.findOneAndUpdate(
+  { verificationToken },
+  { verify: true, verificationToken: null }
+);
 
     res.status(200).json({ avatarURL });
   } catch (error) {
@@ -104,7 +113,10 @@ export const verifyUser = async (req, res, next) => {
 
     user.verify = true;
     user.verificationToken = null;
-    await user.save();
+    await User.findOneAndUpdate(
+  { verificationToken },
+  { verify: true, verificationToken: null }
+);
 
     res.status(200).json({ message: 'Verification successful' });
   } catch (error) {
